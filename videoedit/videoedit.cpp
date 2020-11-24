@@ -51,17 +51,27 @@ vector<int> BGRtoRGB(Vec3b arr) {
 }
 
 
-vector<int> getFrameArray(Mat frame) {
+vector<vector<vector<int>>> getFrameArray(Mat frame) {
+    /// <summary>
+    /// Reads each channel of each pixel of each row and 
+    /// creates an array of those rows from the frame
+    /// </summary>
+    /// <param name="frame"> The frame to create the array from </param>
+    /// <returns> A new 3D array of the frame data </returns>
     int red = 0, green = 0, blue = 0;
 
+    vector<vector<vector<int>>> frameData;
     for (int i = 0; i < frame.rows; i++) {
+        vector<vector<int>> row;
         for (int j = 0; j < frame.cols; j++) {
             Vec3b bgrPixel = frame.at<Vec3b>(i, j);
             vector<int> color = BGRtoRGB(bgrPixel);
 
-            return color;
+            row.insert(row.end(), color.begin(), color.end());
         }
+        frameData.insert(frameData.end(), row.begin(), row.end());
     }
+    return frameData;
 }
 
 
@@ -81,17 +91,17 @@ void runLoop(VideoCapture cap) {
         Mat frame2;
 
         cap.read(frame);
-        cap.read(frame2);
+        // cap.read(frame2);
 
         if (frame.empty()) {
             break;
         }
         
-        vector<int> frameArr = getFrameArray(frame);
-        vector<int> frame2Arr = getFrameArray(frame2);
+        vector<vector<vector<int>>> frameArr = getFrameArray(frame);
+        vector<vector<vector<int>>> frame2Arr = getFrameArray(frame2);
         
-        cout << counter << ") [" << frameArr[0] << ", " << frameArr[1] << ", " << frameArr[2] << "]" << endl;
-        cout << counter << ") [" << frame2Arr[0] << ", " << frame2Arr[1] << ", " << frame2Arr[2] << "]" << endl;
+        // cout << counter << ") [" << frameArr << ", " << frameArr[1][1] << ", " << frameArr[2][10] << "]" << endl;
+        // cout << counter << ") [" << frame2Arr[0] << ", " << frame2Arr[1] << ", " << frame2Arr[2] << "]" << endl;
 
         // TODO Get the difference of each frame
 
