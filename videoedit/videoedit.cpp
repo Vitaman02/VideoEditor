@@ -7,6 +7,23 @@ using namespace std;
 using namespace cv;
 
 
+void print2DVec(vector<vector<int>> arr) {
+    cout << "[";
+    for (int i = 0; i < arr.size(); i++) {
+        cout << "[";
+        for (int j = 0; j < arr[i].size() - 1; j++) {
+            cout << arr[i][j] << ", ";
+        }
+
+        int index = arr[i].size() - 1;
+        if (i == arr.size() - 1) {
+            cout << arr[i][index] << "]]" << endl;
+        } else {
+            cout << arr[i][index] << "], ";
+        }
+    }
+}
+
 string getVideoFilename() {
     /// <summary>
     /// Get the filename of the video to edit
@@ -58,18 +75,19 @@ vector<vector<vector<int>>> getFrameArray(Mat frame) {
     /// </summary>
     /// <param name="frame"> The frame to create the array from </param>
     /// <returns> A new 3D array of the frame data </returns>
-    int red = 0, green = 0, blue = 0;
 
     vector<vector<vector<int>>> frameData;
+    
     for (int i = 0; i < frame.rows; i++) {
         vector<vector<int>> row;
         for (int j = 0; j < frame.cols; j++) {
             Vec3b bgrPixel = frame.at<Vec3b>(i, j);
             vector<int> color = BGRtoRGB(bgrPixel);
-
-            row.insert(row.end(), color.begin(), color.end());
+            
+            row.push_back(color);
         }
-        frameData.insert(frameData.end(), row.begin(), row.end());
+
+        frameData.push_back(move(row));
     }
     return frameData;
 }
@@ -98,10 +116,7 @@ void runLoop(VideoCapture cap) {
         }
         
         vector<vector<vector<int>>> frameArr = getFrameArray(frame);
-        vector<vector<vector<int>>> frame2Arr = getFrameArray(frame2);
-        
-        // cout << counter << ") [" << frameArr << ", " << frameArr[1][1] << ", " << frameArr[2][10] << "]" << endl;
-        // cout << counter << ") [" << frame2Arr[0] << ", " << frame2Arr[1] << ", " << frame2Arr[2] << "]" << endl;
+        // vector<vector<vector<int>>> frame2Arr = getFrameArray(frame2);
 
         // TODO Get the difference of each frame
 
@@ -134,8 +149,10 @@ int main() {
 
     time_t startTime = getTime();
 
+    cout << "Started" << endl;
     runLoop(cap);
 
+    
     time_t deltaTime = getTime() - startTime;
 
     cout << "Elapsed Time: " << deltaTime << "s" << endl;
