@@ -7,7 +7,7 @@ using namespace std;
 using namespace cv;
 
 
-void print2DVec(vector<vector<int>> arr) {
+void print2DVec(vector<vector<int>> arr, bool newline=false) {
     cout << "[";
     for (int i = 0; i < arr.size(); i++) {
         cout << "[";
@@ -17,11 +17,29 @@ void print2DVec(vector<vector<int>> arr) {
 
         int index = arr[i].size() - 1;
         if (i == arr.size() - 1) {
-            cout << arr[i][index] << "]]" << endl;
+            cout << arr[i][index] << "]";
         } else {
             cout << arr[i][index] << "], ";
         }
     }
+    cout << "]";
+    if (newline) {
+        cout << endl;
+    }
+}
+
+void print3DVec(vector<vector<vector<int>>> arr) {
+    cout << "[";
+    int index = 0;
+    for (int i = 0; i < arr.size()-1; i++) {
+        print2DVec(arr[i], false);
+        cout << ", ";
+        index++;
+    }
+
+    index++;
+    print2DVec(arr[index], false);
+    cout << "]" << endl;
 }
 
 string getVideoFilename() {
@@ -142,17 +160,14 @@ int main() {
 
     // Get the length that the output video should be
     // int length = getOutVideoLength();
-    
-    // Open the video to edit
-    VideoCapture cap(filename);
 
+    VideoCapture cap(filename);
 
     time_t startTime = getTime();
 
     cout << "Started" << endl;
     runLoop(cap);
 
-    
     time_t deltaTime = getTime() - startTime;
 
     cout << "Elapsed Time: " << deltaTime << "s" << endl;
